@@ -1,2 +1,4 @@
-# Intro-DS
- Introduction to Data Science 
+# Introduction to Data Science
+## Data Analysis and Prediction Algorithms with R
+
+### Rafael A. Irizarry

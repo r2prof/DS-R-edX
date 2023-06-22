@@ -1,24 +1,28 @@
-# Ctrl+Shift+Enter
-# Ctrl+Enter
-
+# CH-02
+#---------------
 a <- 1
 b <- 1
 c <- -1
 (-b + sqrt(b^2 - 4*a*c) ) / ( 2*a )
 log(8)
+
 data()
-library(dslabs)
+
 data(murders)
 
 murders
+
 class(murders)
 
-# The function str is useful for finding out more about the structure 
-# of an object:
+# The function str is useful for finding out more about the structure of an object:
 str(murders)
+
 head(murders)
+
 tail(murders)
+
 murders$population
+
 murders$region
 
 # We can quickly access the variable names using:
@@ -26,7 +30,10 @@ names(murders)
 
 # Try typing murders$p then hitting the tab key on your keyboard
 murders$population
+
+
 pop <- murders$population
+
 length(pop)
 
 class(pop)

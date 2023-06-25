@@ -1,5 +1,5 @@
-#===============Chapter-05 Importing Data======================
-
+# CH-05
+#------------
 ## How to extract data from a package into the working directory of R
 
 filename <- "murders.csv"

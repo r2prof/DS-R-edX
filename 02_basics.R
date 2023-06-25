@@ -8,11 +8,13 @@ log(8)
 
 data()
 
+library(dslabs)
+
 data(murders)
 
 murders
 
-class(murders)
+(class(murders))
 
 # The function str is useful for finding out more about the structure of an object:
 str(murders)
@@ -80,8 +82,13 @@ record <- list(name = "Muhammad Raza",
                grades = c(95, 92, 91, 97, 93),
                final_grade = "A")
 record
-
+# same-------
+record$student_id
 record[["student_id"]]
+#------------
+record$name
+record$grades
+record$grades
 
 record2 <- list("John Doe", 1234)
 

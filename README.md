@@ -2,7 +2,12 @@
 ## Data Analysis and Prediction Algorithms with R
 
 ### Rafael A. Irizarry
-A hardcopy version of the book is available from CRC Press
+A hardcopy version of the book is available from CRC Press.
+This is the website for the Introduction to Data Science.
+http://rafalab.dfci.harvard.edu/dsbook-part-1/
+
+This is the website for the Advanced Data Science.
+http://rafalab.dfci.harvard.edu/dsbook-part-2/
 
 A free PDF of the October 24, 2019 version of the book is available from Leanpub
 

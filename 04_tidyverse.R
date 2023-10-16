@@ -166,13 +166,18 @@ my_states
 
 # Note: For select, it didn't work like that. 
 
-# The pipe: %>%----
-
+# The pipe: %>%----|>
+cat("\f")
 # With dplyr we can perform a series of operations, for example select and then 
 # filter, by sending the results of one function to another using what is called 
 # the pipe operator: %>%
-cat("\f")
+# original data --> select --> filter
+
 murders %>% select(state, region, rate) %>% filter(rate <= 0.71)
+
+# same command with |>
+
+murders |> select(state, region, rate) |> filter(rate <= 0.71)
 
 
 # In general, the pipe sends the result of the left side of the pipe to be the 
@@ -193,6 +198,10 @@ log2(sqrt(16))
 # to specify the required first argument since the dplyr functions we have 
 # described all take the data as the first argument. In the code we wrote:
 
+# 4.6 Exercises----
+# Q-01:  The pipe |> can be used to perform operations sequentially without 
+#        having to define intermediate objects. Start by redefining murder 
+#        to include rate and rank.
 murders %>% select(state, region, rate) %>% filter(rate <= 0.71)
 
 # murders is the first argument of the select function, and the new data frame 
@@ -204,7 +213,8 @@ murders %>% select(state, region, rate) %>% filter(rate <= 0.71)
 
 murders <- mutate(murders, rate =  total / population * 100000, 
                   rank = rank(-rate))
-murders
+head(murders)
+cat("\f")
 
 my_states <- filter(murders, region %in% c("Northeast", "West") & 
                       rate < 1)
@@ -218,30 +228,44 @@ select(my_states, state, rate, rank)
 
 
 mutate(murders, rate =  total / population * 100000, 
-       rank = rank(-rate)) %>% select(state, rate, rank)
+       rank = rank(-rate)) %>% select(state, rate, rank) %>% head()
 
-# Notice that select no longer has a data frame as the first argument. The first
-# argument is assumed to be the result of the operation conducted right before the %>%.
+# Notice that select no longer has a data frame as the first argument. 
+# The first argument is assumed to be the result of the operation conducted 
+# right before the %>%.
 
 # Reset murders to the original table by using data(murders). Use a pipe to 
 # create a new data frame called my_states that considers only states in the 
-# Northeast or West which have a murder rate lower than 1, and contains only the state, rate and rank columns. The pipe should also have four components separated by three %>%. The code should look something like this:
+# Northeast or West which have a murder rate lower than 1, and contains only 
+# the state, rate and rank columns. 
 
-# my_states <- murders %>%
-#  mutate SOMETHING %>% 
-#  filter SOMETHING %>% 
-#  select SOMETHING
+# The pipe should also have four components separated by three %>%. The code 
+# should look something like this:
 
-# summarize
+data(murders)
+my_states <- murders %>%
+  mutate(rate =  total / population * 100000, rank = rank(-rate))%>%
+   filter(region %in% c("Northeast", "West") & rate < 1) %>% 
+    select(state, rate, rank) %>% head()
+
+# 04-Summarizing the data----
 
 # The summarize function in dplyr provides a way to compute summary statistics 
-# with intuitive and readable code. We start with a simple example based on heights. 
-# The heights dataset includes heights and sex reported by students in an in-class survey.
+# with intuitive and readable code. 
+
+# We start with a simple example based on heights. The heights dataset includes 
+# heights and sex reported by students in an in-class survey.
 
 library(dplyr)
 library(dslabs)
+
 data(heights)
-heights
+
+str(heights)
+
+head(heights)
+
+hist(heights$height)
 
 s <- heights %>% 
   filter(sex == "Female") %>%
@@ -251,8 +275,10 @@ s
 # This takes our original data table as input, filters it to keep only females, 
 # and then produces a new summarized table with just the average and the 
 # standard deviation of heights. We get to choose the names of the columns of 
-# the resulting table. For example, above we decided to use average and 
-# standard_deviation, but we could have used other names just the same.
+# the resulting table. 
+
+# For example, above we decided to use average and standard_deviation, but we 
+# could have used other names just the same.
 
 # Because the resulting table stored in s is a data frame, we can access the 
 # components with the accessor $:
@@ -265,6 +291,7 @@ s$standard_deviation
 # and we can use them directly. So when inside the call to the summarize function 
 # we write mean(height), the function is accessing the column with the 
 # name "height" and then computing the average of the resulting numeric vector. 
+
 # We can compute any other summary that operates on vectors and returns a single 
 # value. For example, we can add the median, minimum, and maximum heights like this:
 
@@ -273,28 +300,69 @@ heights %>%
   summarize(median = median(height), minimum = min(height), 
             maximum = max(height))
 
-# We can obtain these three values with just one line using the quantile function: 
-# for example, quantile(x, c(0,0.5,1)) returns the min (0th percentile), 
-# median (50th percentile), and max (100th percentile) of the vector x. 
-# However, if we attempt to use a function like this that returns two or more 
-# values inside summarize:
+# Let’s compute the average murder rate for the United States. 
+# Remember our data table includes total murders and population size for 
+# each state and we have already used dplyr to add a murder rate column:
 
-heights %>% 
-  filter(sex == "Female") %>%
-  summarize(range = quantile(height, c(0, 0.5, 1)))
+murders <- murders |> mutate(rate = total/population*100000)
 
+head(murders)
+# Remember that the US murder rate is not the average of the state murder rates:
 
-us_murder_rate <- murders %>%
+summarize(murders, mean(rate))
+
+# This is because in the computation above the small states are given the same 
+# weight as the large ones. The US murder rate is the total number of murders 
+# in the US divided by the total US population. So the correct computation is:
+us_murder_rate <- murders |>
   summarize(rate = sum(total) / sum(population) * 100000)
-
 us_murder_rate
 
-# pull
+# Multiple summaries
+# Suppose we want three summaries from the same variable such as the median, 
+# minimum, and maximum heights. We can use summarize like this:
+
+# But we can obtain these three values with just one line using the quantile 
+# function: quantile(x, c(0.5, 0, 1)) returns the median (50th percentile), 
+# the min (0th percentile), and max (100th percentile) of the vector x. 
+
+# Here we can’t use summarize because it expects one value per row. For this 
+# reason we have to define a function that returns a data frame like this:
+
+median_min_max <- function(x){
+  qs <- quantile(x, c(0.5, 0, 1))
+  data.frame(median = qs[1], minimum = qs[2], maximum = qs[3])
+}
+
+heights |> 
+  filter(sex == "Female") |>
+  summarize(median_min_max(height))
+
+# 05-Group then summarize with group_by----
+# A common operation in data exploration is to first split data into groups and 
+# then compute summaries for each group. For example, we may want to compute the 
+# average and standard deviation for men’s and women’s heights separately. 
+
+# The group_by function helps us do this.
+heights |> group_by(sex)
+
+# Although not immediately obvious from its appearance, this is now a special 
+# data frame called a grouped data frame, and dplyr functions, in particular 
+# summarize, will behave differently when acting on this object. 
+
+# Conceptually, you can think of this table as many tables, with the same 
+# columns but not necessarily the same number of rows, stacked together in 
+# one object.
+
+heights |> 
+  group_by(sex) |>
+  summarize(average = mean(height), standard_deviation = sd(height))
+
+# 06-pull----
 # The us_murder_rate object defined above represents just one number. Yet we 
 # are storing it in a data frame:
-  
+head(us_murder_rate)
 class(us_murder_rate)
-
 
 # Since, as most dplyr functions, summarize always returns a data frame.
 
@@ -322,40 +390,7 @@ us_murder_rate
 
 class(us_murder_rate)
 
-
-# Group then summarize with group_by
-# A common operation in data exploration is to first split data into groups 
-# and then compute summaries for each group. For example, we may want to compute 
-# the average and standard deviation for men's and women's heights separately. 
-# The group_by function helps us do this. If we type this:
-  
-heights %>% group_by(sex)
-
-
-# The result does not look very different from heights, except we see 
-# Groups: sex [2] when we print the object. Although not immediately obvious 
-# from its appearance, this is now a special data frame called a grouped data 
-# frame, and dplyr functions, in particular summarize, will behave differently 
-# when acting on this object. Conceptually, you can think of this table as many 
-# tables, with the same columns but not necessarily the same number of rows, 
-# stacked together in one object. When we summarize the data after grouping, 
-# this is what happens:
-
-
-heights %>% 
-  group_by(sex) %>%
-  summarize(average = mean(height), standard_deviation = sd(height))
-
-# The summarize function applies the summarization to each group separately.
-
-# For another example, let's compute the median murder rate in the four regions
-# of the country:
-  
-murders
-murders %>% group_by(region) %>%
-  summarize(median_rate = median(rate))
-
-# Sorting data frames
+# 07-Sorting data frames----
 # When examining a dataset, it is often convenient to sort the table by the 
 # different columns. We know about the order and sort function, but for ordering 
 # entire tables, the dplyr function arrange is useful. For example, here we order 
@@ -371,10 +406,13 @@ head()
 murders %>% arrange(rate) %>%
 head()
 
-# Note that the default behavior is to order in ascending order. In dplyr, the function desc transforms a vector so that it is in descending order. To sort the table in descending order, we can type:
+# Note that the default behavior is to order in ascending order. In dplyr, the 
+# function desc transforms a vector so that it is in descending order. 
+
+# To sort the table in descending order, we can type:
 
 murders %>% 
-  arrange(desc(rate)) 
+  arrange(desc(rate)) %>% head(rate)
 
 # Nested sorting
 # If we are ordering by a column with ties, we can use a second column to break
@@ -387,12 +425,15 @@ murders %>% arrange(region, rate) %>% head()
 # The top n
 
 # In the code above, we have used the function head to avoid having the page 
-# fill up with the entire dataset. If we want to see a larger proportion, we 
-# can use the top_n function. This function takes a data frame as it's first 
-# argument, the number of rows to show in the second, and the variable to filter 
-# by in the third. Here is an example of how to see the top 5 rows:
+# fill up with the entire dataset. 
 
-murders %>% top_n(10, rate)
+# If we want to see a larger proportion, we can use the top_n function. 
+# This function takes a data frame as it's first argument, the number of 
+# rows to show in the second, and the variable to filter by in the third. 
+
+# Here is an example of how to see the top 5 rows:
+
+murders %>% top_n(5) %>% arrange(rate)
 
 library(NHANES)
 data(NHANES)

@@ -435,12 +435,47 @@ murders %>% arrange(region, rate) %>% head()
 
 murders %>% top_n(5) %>% arrange(rate)
 
+
+# 4.10 Exercises -----
 library(NHANES)
 data(NHANES)
 View(NHANES)
 head(NHANES)
 
-#  Tibbles
+# The NHANES data has many missing values. The mean and sd functions in R will 
+# return NA if any of the entries of the input vector is an NA.
+
+# Q-01:
+# We will provide some basic facts about blood pressure. 
+# First let’s select a group to set the standard. We will use 20-to-29-year-old 
+# females. AgeDecade is a categorical variable with these ages. 
+
+# Note that the category is coded like " 20-29", with a space in front! What is 
+# the average and standard deviation of systolic blood pressure as saved in the 
+# BPSysAve variable? Save it to a variable called ref.
+
+# Hint: Use filter and summarize and use the na.rm = TRUE argument when computing 
+# the average and standard deviation. 
+# You can also filter the NA values using filter.
+
+
+ref <- NHANES |> filter(Gender == "female", AgeDecade == " 20-29") |>
+  summarize(avg = mean(BPSysAve, na.rm = TRUE), sd = sd(BPSysAve, na.rm = TRUE))
+
+head(ref)
+
+# Q-02:
+# Using a pipe, assign the average to a numeric variable ref_avg. 
+# Hint: Use the code similar to above and then pull.
+
+ref_avg <- ref |> pull(avg)
+
+ref_avg
+
+class(ref_avg)
+
+
+
 
 # Tidy data must be stored in data frames. We introduced the data frame in 
 # Section 2.4.1 and have been using the murders data frame throughout the book.

@@ -31,7 +31,8 @@ View(BOD)
 
 # Manipulating data frames
 
-# 01-Adding a column with mutate ----
+# 01-mutate----
+# Adding a column with mutate
 # The function mutate takes the data frame as a first argument and the name and
 # values of the variable as a second argument using the convention name = values. 
 # So, to add murder rates, we use:
@@ -52,7 +53,8 @@ murders
 # This approach makes the code much more readable.
 
 
-# 02-Subsetting with filter----
+# 02-filter----
+# Subsetting with filter
 # Now suppose that we want to filter the data table to only show the entries for 
 # which the murder rate is lower than 0.71. To do this we use the filter function, 
 # which takes the data table as the first argument and then the conditional 
@@ -62,7 +64,8 @@ a= filter(murders, rate <= 0.71)
 a
 cat("\f")
 
-# 03-Electing columns with select----
+# 03-filter-----
+# Electing columns with select
 # Although our data table only has six columns, some data tables include 
 # hundreds. If we want to view just a few, we can use the dplyr select function. 
 # In the code below we select three columns, assign this to a new object and 
@@ -338,7 +341,8 @@ heights |>
   filter(sex == "Female") |>
   summarize(median_min_max(height))
 
-# 05-Group then summarize with group_by----
+# 05-group_by----
+# Group then summarize with group_by
 # A common operation in data exploration is to first split data into groups and 
 # then compute summaries for each group. For example, we may want to compute the 
 # average and standard deviation for men’s and women’s heights separately. 
@@ -390,7 +394,8 @@ us_murder_rate
 
 class(us_murder_rate)
 
-# 07-Sorting data frames----
+# 07-arrange----
+# Sorting data frames
 # When examining a dataset, it is often convenient to sort the table by the 
 # different columns. We know about the order and sort function, but for ordering 
 # entire tables, the dplyr function arrange is useful. For example, here we order 
@@ -475,7 +480,63 @@ ref_avg
 class(ref_avg)
 
 
+# Q-03: 
+#  Now report the min and max values for the same group.
 
+ref <- NHANES |> filter(Gender == "female", AgeDecade == " 20-29") |>
+  summarize(min_value = min(BPSysAve, na.rm = TRUE), 
+            max_value = max(BPSysAve, na.rm = TRUE))
+head(ref)
+
+# Q-04
+# Compute the average and standard deviation for females, but for each age 
+# group separately rather than a selected decade as in question 1. 
+# Note that the age groups are defined by AgeDecade. 
+
+# Hint: rather than filtering by age and gender, filter by Gender and then 
+# use group_by.
+
+ref_f <- NHANES |> filter(Gender == "female") |>
+  group_by(AgeDecade) |>
+  summarize(avg_age_f = mean(Age), std_f = sd(Age))
+
+head(ref_f)
+
+# Q-05
+# Repeat exercise 4 for males.
+
+ref_m <- NHANES |> filter(Gender == "male") |>
+  group_by(AgeDecade) |>
+  summarize(avg_age_m = mean(Age), std_m = sd(Age))
+
+head(ref_m)
+
+# Q-06
+#  We can actually combine both summaries for exercises 4 and 5 into one line of 
+# code. This is because group_by permits us to group by more than one variable. 
+# Obtain one big summary table using group_by(AgeDecade, Gender).
+
+ref_age <- NHANES |> group_by(AgeDecade, Gender) |>
+  summarize(avg_age = mean(Age), std = sd(Age))
+
+head(ref_age)
+
+View(ref_age)
+
+# For males between the ages of 40-49, compare systolic blood pressure across 
+# race as reported in the Race1 variable. Order the resulting table from lowest 
+# to highest average systolic blood pressure.
+
+ref_m_race <- NHANES |> filter(Gender == "male", AgeDecade == " 40-49") |>
+  group_by(Race1) |>
+    arrange((BPSysAve)) 
+
+
+result <- NHANES |> filter(Gender == "male", AgeDecade == " 40-49") |>
+  group_by(Race1) |>
+    arrange(AvgSBP)
+
+# Tibbles-----
 
 # Tidy data must be stored in data frames. We introduced the data frame in 
 # Section 2.4.1 and have been using the murders data frame throughout the book.

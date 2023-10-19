@@ -673,9 +673,8 @@ log(8, base = 2)
 2 |> log(8, base = _)
 2 %>% log(8, base = .)
 
-#*****************************************************
 
-# The purrr package
+# purrr package-----
 
 # In Section 3.5 we learned about the sapply function, which permitted us to 
 # apply the same function to each element of a vector. We constructed a function 
@@ -690,16 +689,20 @@ compute_s_n <- function(n){
 n <- 1:25
 s_n <- sapply(n, compute_s_n)
 s_n
+class(s_n)
 
 # This type of operation, applying the same function or procedure to elements 
 # of an object, is quite common in data analysis. The purrr package includes 
 # functions similar to sapply but that better interact with other tidyverse 
 # functions. The main advantage is that we can better control the output type 
-# of functions. In contrast, sapply can return several different object types; 
+# of functions. 
+
+# In contrast, sapply can return several different object types; 
 # for example, we might expect a numeric result from a line of code, but sapply 
-# might convert our result to character under some circumstances. purrr functions 
-# will never do this: they will return objects of a specified type or return an 
-# error if this is not possible.
+# might convert our result to character under some circumstances. 
+
+# purrr functions will never do this: they will return objects of a specified 
+# type or return an error if this is not possible.
 
 # The first purrr function we will learn is map, which works very similar to 
 # sapply but always, without exception, returns a list:
@@ -732,6 +735,7 @@ compute_s_n <- function(n){
   tibble(sum = sum(x))
 }
 s_n <- map_df(n, compute_s_n)
+class(s_n)
 
 # The purrr package provides much more functionality not covered here. For more 
 # details you can consult this online resource.

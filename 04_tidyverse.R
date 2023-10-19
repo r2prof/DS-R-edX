@@ -664,97 +664,16 @@ class(grades$names)
 as_tibble(grades) %>% class()
 
 
-# The dot operator
+
+# The placeholder - dot operator
 # One of the advantages of using the pipe %>% is that we do not have to keep 
-# naming new objects as we manipulate the data frame. As a quick reminder, 
-# if we want to compute the median murder rate for states in the southern 
-# states, instead of typing:
-  
-tab_1 <- filter(murders, region == "South")
-tab_1
-tab_2 <- mutate(tab_1, rate = total / population * 10^5)
-rates <- tab_2$rate
-rates
-median(rates)
+# naming new objects as we manipulate the data frame. 
 
+log(8, base = 2)
+2 |> log(8, base = _)
+2 %>% log(8, base = .)
 
-# We can avoid defining any new intermediate objects by instead typing:
-filter(murders, region == "South") %>% 
-  mutate(rate = total / population * 10^5) %>% 
-  summarize(median = median(rate)) %>%
-  pull(median)
-  
-  
-# We can do this because each of these functions takes a data frame as the 
-# first argument. But what if we want to access a component of the data frame. 
-# For example, what if the pull function was not available and we wanted to 
-# access tab_2$rate? What data frame name would we use? The answer is the dot operator.
-
-# For example to access the rate vector without the pull function we could use
-
-rates <- filter(murders, region == "South") %>% 
-  mutate(rate = total / population * 10^5) %>% 
-  .$rate
-
-median(rates)
-
-# In the next section, we will see other instances in which using 
-# the . is useful.
-
-# do
-# The tidyverse functions know how to interpret grouped tibbles. Furthermore, 
-# to facilitate stringing commands through the pipe %>%, tidyverse functions 
-# consistently return data frames, since this assures that the output of a 
-# function is accepted as the input of another. But most R functions do not 
-# recognize grouped tibbles nor do they return data frames. The quantile 
-# function is an example we described in Section 4.7.1. The do function serves 
-# as a bridge between R functions such as quantile and the tidyverse. The do 
-# function understands grouped tibbles and always returns a data frame.
-
-# In Section 4.7.1, we noted that if we attempt to use quantile to obtain the 
-# min, median and max in one call, we will receive an error: 
-#Error: expecting result of length one, got : 2.
-
-
-data(heights)
-heights %>% 
-  filter(sex == "Female") %>%
-  summarize(range = quantile(height, c(0, 0.5, 1)))
-
-# We can use the do function to fix this.
-
-# First we have to write a function that fits into the tidyverse approach: 
-# that is, it receives a data frame and returns a data frame.
-
-my_summary <- function(dat){
-  x <- quantile(dat$height, c(0, 0.5, 1))
-  tibble(min = x[1], median = x[2], max = x[3])
-}
-
-
-# We can now apply the function to the heights dataset to obtain the summaries:
-
-heights %>% 
-  group_by(sex) %>% 
-  my_summary
-
-# But this is not what we want. We want a summary for each sex and the code 
-# returned just one summary. This is because my_summary is not part of the 
-# tidyverse and does not know how to handled grouped tibbles. do makes this 
-# connection:
-
-heights %>% 
-  group_by(sex) %>% 
-  do(my_summary(.))
-
-
-# If you do not use the parenthesis, then the function is not executed and 
-# instead do tries to return the function. This gives an error because do must 
-# always return a data frame. You can see the error by typing:
-
-heights %>% 
-  group_by(sex) %>% 
-  do(my_summary)
+#*****************************************************
 
 # The purrr package
 

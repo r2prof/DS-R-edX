@@ -75,7 +75,7 @@ g + aes(size = class, col = as.factor(cyl))
 # Alpha - works only in sigle variable
 g + aes(alpha = class, col = class)
 
-#Alpha in Density plot
+# Alpha in Density plot
 ggplot(mpg,aes(x=displ, fill=as.factor(cyl)))+
   geom_density()
 
@@ -85,54 +85,38 @@ ggplot(mpg,aes(x=displ, fill=as.factor(cyl)))+
 # Video-04
 #---
 
-#Topics Covered:
-#1. Horizontal Line
-#2. Vertical line
-#3. Pattern 
-#4. Straight Line
-#5. Annotations
-#6. Titles & Labels
-#7. Themes
-
-gg=ggplot(data=mpg,aes(x=displ, y=hwy))+
+gg <- ggplot(data = mpg, aes(x = displ, y = hwy))+
   geom_point()
 
 gg
 
 
-#1. Horizontal Line
-gg+geom_hline(yintercept = 25, 
-              size=1, colour="red2")
+# Horizontal line----
+gg + geom_hline(yintercept = 25, size = 1, colour= "red")
 
-#2. Vertical Line
-gg+geom_vline(xintercept = 4, 
-              size=2, colour="red2")
+# Vertical Line----
+gg + geom_vline(xintercept = 4, size = 1, colour= "red")
 
-#3. Curvi-linear Pattern
-gg+geom_smooth()
+#  Curvi-linear pattern----
+gg + geom_smooth()
 
-#4. Linear Regression Line  
-gg+geom_smooth(size=1.5, 
-               method = "lm")
+# Linear Regression Line----  
+gg + geom_smooth(size = 1.5, method = "lm")
 
+# Additional text information  
+gg + annotate(geom = "text", label = "R-sq =0.5",
+              x = 5, y = 40, size = 5, col = 2)+
+    geom_smooth(size = 1.5, method = "lm")
 
-#5. Additional Text Information  
-gg+annotate(geom = "text", 
-            label="R2=.5",
-            x=5, y=40, size=5, 
-            col=2)+
-  geom_smooth(size=1.5, 
-              method = "lm")
-
-#6. Titles & Labels
-gg+labs(title="My Chart", 
-        subtitle="Highway Mileage", 
-        y="Highway Mileage", 
-        x="Displacement", 
-        caption="First chart")
+# Titles & Labels
+gg + labs(title = "My Chart", 
+          subtitle = "Highway Mileage", 
+          y = "Highway Mileage", 
+          x = "Displacement", 
+          caption = "First chart")
 
 
-#7. Different Themes
+# Different themes----
 gg+theme_bw()
 gg+theme_gray()
 gg+theme_grey()
@@ -143,8 +127,9 @@ gg+theme_classic()
 gg+theme_void()
 gg+theme_dark()
 
-#Package add2ggplot
-require(add2ggplot)
+# More themes with package add2ggplot----
+library(add2ggplot)
+
 gg+theme_classic2()
 gg+theme_du_bois()
 gg+theme_grey_and_red()

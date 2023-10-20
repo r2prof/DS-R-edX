@@ -136,6 +136,188 @@ gg+theme_grey_and_red()
 gg+theme_ilo()
 gg+theme_white()
 
+# Video-05
+#---
+
+# Plots for single continuous variable -----------
+
+c <- ggplot(mpg, aes(displ))
+
+# Histogram------
+# geom_histogram()
+
+?geom_histogram
+c + geom_histogram()
+c + geom_histogram(bins=6)
+c + geom_histogram(bins=6, fill=5)
+c + geom_histogram(bins=6, fill=5, col=1)
+
+# Frequency polygon()-----
+# geom_freqpoly()
+
+c + geom_freqpoly()
+c + geom_histogram()
+
+c + geom_histogram(fill = 5, col = 1)+
+    geom_freqpoly(col = 2,size = 1)
+
+# Density Plot-----
+# geom_density()
+?geom_density()
+c + geom_density()
+c + geom_density(stat = "count")
+
+# Dotplot-----
+# geom_dotplot()
+c + geom_dotplot()
+c + geom_dotplot(binwidth = .2, 
+               fill=5)
+
+
+#5.Boxplot
+#geom_boxplot()
+
+?geom_boxplot
+c+geom_boxplot()
+c+geom_boxplot(aes(x=hwy))
+c+geom_boxplot(aes(x=hwy),
+               outlier.color = 2,
+               outlier.size = 3,
+               outlier.stroke = 2,
+               outlier.shape = 8)
+
+#-------***---------***----------
+
+
+
+
+
+
+
+#====================================
+
+#------------------------------
+#One Discrete Variable 
+#------------------------------
+
+d=ggplot(mpg, aes(drv))
+summary(factor(drv))
+
+#1.Barplot- geom_bar() 
+?geom_bar()
+d+geom_bar()
+d+geom_bar(fill=5, col=1)
+d+geom_bar(fill=5, col=1, size=3)
+
+#2.Column Plot
+# geom_col()
+?geom_col()
+d+geom_col(aes(y=hwy))
+tapply(hwy, drv, sum)
+
+d+geom_col(aes(y=mean(hwy)),fill=5,col=2)
+tapply(hwy, drv, mean)
+table(drv)
+table(drv)*mean(hwy)
+
+#3. Piechart
+d=ggplot(mpg, aes(drv))
+d+geom_bar()
+
+
+d+geom_bar()+coord_polar()
+d1=ggplot(mpg, aes(class))
+d1+geom_bar()+coord_polar()
+
+
+#-------***---------***----------
+
+
+
+
+#====================================
+
+#------------------------------
+#One Continuous Variable &
+#One Discrete Variable
+#------------------------------
+
+cd=ggplot(mpg, aes(factor(drv),hwy))
+
+#1.Violinplot
+#geom_violin()
+?geom_violin()
+cd+geom_violin()
+
+#2.Boxplot
+#geom_boxplot()
+?geom_boxplot()
+
+c+geom_boxplot()
+c+geom_boxplot(aes(y=class))
+c+geom_boxplot(aes(y=class), fill=7)
+
+cd+geom_boxplot()
+
+cd+geom_boxplot(outlier.shape = 3,
+                outlier.colour = 2,
+                outlier.size = 4,
+                outlier.stroke = 2)
+
+#Violin Plot and Boxplot combined
+cd+geom_violin(fill=5)
+cd+geom_violin(fill=5)+geom_boxplot()
+
+#-------***---------***----------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

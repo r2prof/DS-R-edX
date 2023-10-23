@@ -13,7 +13,7 @@ library(dslabs)
 data(murders)
 
 murders
-
+str(murders)
 (class(murders))
 
 # The function str is useful for finding out more about the structure of an object:

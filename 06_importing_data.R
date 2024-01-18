@@ -1,5 +1,6 @@
-# CH-05
+# CH-06
 #------------
+
 ## How to extract data from a package into the working directory of R
 
 filename <- "murders.csv"

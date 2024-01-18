@@ -66,20 +66,54 @@ y
 y[,a := 1]
 x
 
+# Row-wise subsetting
 
+# With dplyr, we filtered like this:
+filter(murders, rate <= 0.7)
 
+# With data.table, we again use an approach similar to subsetting matrices, 
+# except like dplyr, data.table knows that rate refers to a column name and 
+# not an object in the R environment:
+murders_dt[rate <= 0.7]
 
+# Summarizing data
 
+# As an example, we will use the heights dataset:
+heights_dt <- as.data.table(heights)
 
+# In data.table, we can call functions inside .() and they will be 
+# applied to columns So the equivalent of:
+s <- heights |> summarize(avg = mean(height), sd = sd(height))
+s
 
+# in dplyr is the following in data.table:
+s <- heights_dt[, .(avg = mean(height), sd = sd(height))]
 
+# Multiple summaries
+# We defined the following function to permit multiple column summaries 
+# in dplyr:
 
+median_min_max <- function(x){
+    qs <- quantile(x, c(0.5, 0, 1))
+    data.frame(median = qs[1], minimum = qs[2], maximum = qs[3])
+  }
 
+# In data.table we place a function call within .() to obtain the 
+# three number summary:
+heights_dt[, .(median_min_max(height))]
 
+# We can order rows using the same approach we use for filter. 
+# Here are the states ordered by murder rate:
+murders_dt[order(population)]
 
+# To sort the table in descending order, we can order by the negative of 
+# population or use the decreasing argument:
+murders_dt[order(population, decreasing = TRUE)] 
 
-
-
+# Nested sorting
+# Similarly, we can perform nested ordering by including more than one 
+# variable in order:
+murders_dt[order(region, rate)] 
 
 
 
